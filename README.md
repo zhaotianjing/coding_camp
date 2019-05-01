@@ -7,4 +7,4 @@ data:[pedigree_clean.txt](https://github.com/zhaotianjing/coding_camp/blob/maste
 
 05/01/2019  
 **continue wrapping up a function for quality control for a pedigree file**.  
-code: [pedi_clean2.jl(]https://github.com/zhaotianjing/coding_camp/blob/master/pedi_clean2.jl)  
+code: [pedi_clean2.jl](https://github.com/zhaotianjing/coding_camp/blob/master/pedi_clean2.jl)  
