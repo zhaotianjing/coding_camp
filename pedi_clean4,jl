@@ -1,0 +1,80 @@
+function quality_control(file,miss_vec; delim = ',', header = 0)
+
+    #Zigui Section
+    
+    dat = CSV.read("pedigree_clean.txt", delim = ",", header = 1,missingstrings = miss_vec)
+    #Potential error, now read nothing will return "" instead of missing
+    
+    #Step 1. Remove duplicates
+    dat = unique!(dat) #remove duplicate
+    
+    #Step 2. Remove the rows containing missing son
+    miss_son_row=ismissing.(dat[:,1])  #find the row that miss son
+   
+    miss_son_index = findall(miss_son_row)
+   
+    miss_par_son = dat[miss_par,1]
+    if !isempty(miss_son_row) @warn "Find missing son record at row $miss_son_index" end
+    deleterows!(dat,miss_son_row)
+    
+    #Replace all missing value with "NA"
+    for i in 2:ncol(dat)
+        dat[:,i] = replace!(dat[:,i], missing => "NA")
+    end
+   
+    println("Zigui section finish")
+    
+    
+
+    #Jiayi Section
+    #Step 3. Remove individuals that are both parents and children
+
+    index = collect(1:1:nrow(dat)) 
+    ConflictRole = index[(dat[1] .== dat[2]) .| (dat[1] .== dat[3])]
+    Ind = String.(dat[ConflictRole, 1])  
+    deleterows!(dat, ConflictRole)
+    
+    if !isempty(ConflictRole)
+        @warn "Conflict Role observed for individual $Ind"
+    end
+    
+    println("Jiayi section finish")
+    
+    
+    #Step 4. Find sons that have different parents
+    sonIDs = dat[1]
+    dup_sonIDs = unique(sonIDs[nonunique(dat, 1)])  # find ID of duplicate son
+
+    dup_son_index = findall(x -> x in dup_sonIDs, sonIDs)  # find index of duplicate son
+
+    # warning
+    if !isempty(dup_son_index)
+        dup_son_data = dat[dup_son_index,:]
+        @warn "Sons with different parents in row $dup_son_index
+        $dup_son_data"
+    end
+
+
+
+    #Step 5. Find individuals that appear in both sire and dam columns
+    dup_parents = intersect(dat[2], dat[3])
+    setdiff!(dup_parents,miss_vec)  # remove individuals in miss_vec
+
+    dup_parents_index = vcat(findall(x->x in dup_parents, dat[2]),findall(x->x in dup_parents, dat[3]))  # find index of individuals appear in both sire and dam columns
+
+    sort!(unique!(dup_parents_index))
+
+    # warning
+    if !isempty(dup_parents_index)
+        dup_dat= dat[dup_parents_index,:]
+        @warn "Parents in row $dup_parents_index appear in both dam and sire columns
+        $dup_dat"
+    end
+    println("Tianjing section finish")
+    return dat
+end
+   
+
+#Testing
+miss_vec = [" ","0"]
+quality_control("pedigree_clean.txt",miss_vec)
