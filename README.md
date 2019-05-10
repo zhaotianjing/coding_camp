@@ -12,7 +12,7 @@ code: [pedi_clean4.jl](https://github.com/zhaotianjing/coding_camp/blob/master/p
 **Make a Manhattan Plots using Plots.jl package.**  
 data: [manhattan.txt](https://github.com/zhaotianjing/coding_camp/blob/master/manhattan.txt)  
 code: [Manhattan.jl](https://github.com/zhaotianjing/coding_camp/blob/master/Manhattan.jl)  
-
+code: [Manhattan_loop.jl](https://github.com/zhaotianjing/coding_camp/blob/master/manhattan_loop.jl)  
 
 
 
